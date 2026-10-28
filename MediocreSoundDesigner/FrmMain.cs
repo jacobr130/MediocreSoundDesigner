@@ -23,14 +23,14 @@ public partial class FrmMain : Form
         panTracks.ClientSizeChanged += (_, _) =>
         {
             if (IsHandleCreated)
-                BeginInvoke((Action)UpdateSizes);
+                BeginInvoke((Action)RealignTrackRows);
         };
 
         btnPlay.BackgroundImage = Resources.play;
         trackManager.DrawTimescale = trkDrawTimescale.Value;
         panTracks.AutoScroll = true;
         panTracks.HorizontalScroll.Enabled = false;
-        UpdateSizes();
+        RealignTrackRows();
     }
 
     // GUI controls
@@ -60,7 +60,7 @@ public partial class FrmMain : Form
                         trackManager.SelectedTrack.PanDrawSamples.Dispose();
                         trackManager.SelectedTrack.Dispose();
                         trackManager.RemTrack(trackManager.SelectedTrack);
-                        UpdateSizes();
+                        RealignTrackRows();
                         return true;
                     }
                 }
@@ -71,7 +71,7 @@ public partial class FrmMain : Form
 
     private void FrmMain_SizeChanged(object sender, EventArgs e)
     {
-        UpdateSizes();
+        RealignTrackRows();
     }
 
     private void btnPlay_Click(object sender, EventArgs e)
@@ -96,7 +96,7 @@ public partial class FrmMain : Form
             Track newTrack = new(ofdLoadFile.FileName);
             CreateTrackRow(newTrack);
             trackManager.AddTrack(newTrack);
-            UpdateSizes();
+            RealignTrackRows();
             newTrack.PanDrawSamples.Invalidate();
         }
     }
@@ -141,7 +141,7 @@ public partial class FrmMain : Form
         Track newTrack = new(new float[0]);
         CreateTrackRow(newTrack);
         trackManager.AddTrack(newTrack);
-        UpdateSizes();
+        RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
 
         FrmGenRecord frm = new();
@@ -163,7 +163,7 @@ public partial class FrmMain : Form
         Track newTrack = new(samples);
         CreateTrackRow(newTrack);
         trackManager.AddTrack(newTrack);
-        UpdateSizes();
+        RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
     }
     private void menuGenGradientNoise_Click(object sender, EventArgs e)
@@ -194,7 +194,7 @@ public partial class FrmMain : Form
         Track newTrack = new(samples);
         CreateTrackRow(newTrack);
         trackManager.AddTrack(newTrack);
-        UpdateSizes();
+        RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
     }
 
@@ -223,7 +223,7 @@ public partial class FrmMain : Form
 
     // Helper methods
     private CtrlTrackRow CreateTrackRow(Track track)
-    {   
+    {
         var trackRow = new CtrlTrackRow();
         trackRow.Width = panTracks.ClientSize.Width;
         trackRow.BorderStyle = BorderStyle.FixedSingle;
@@ -253,7 +253,7 @@ public partial class FrmMain : Form
         return trackRow;
     }
 
-    private void UpdateSizes()
+    private void RealignTrackRows()
     {
         int top = 0;
         foreach (Track track in trackManager.Tracks)
@@ -265,7 +265,7 @@ public partial class FrmMain : Form
             row.Top = top;
             row.Width = panTracks.ClientSize.Width;
 
-            int rowHeight = row.Height; 
+            int rowHeight = row.Height;
             row.pnlTrackOptions.Left = row.ClientSize.Width - row.pnlTrackOptions.Width;
             row.pnlTrackOptions.Top = 0;
             row.pnlTrackOptions.Height = rowHeight;
