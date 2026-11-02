@@ -18,6 +18,7 @@ public partial class FrmMain : Form
     // setup
     private void Setup()
     {
+        MessageBox.Show("Setup is running");
         DoubleBuffered = true;
         trackManager = new(panTracks);
         panTracks.ClientSizeChanged += (_, _) =>
@@ -31,6 +32,8 @@ public partial class FrmMain : Form
         panTracks.AutoScroll = true;
         panTracks.HorizontalScroll.Enabled = false;
         RealignTrackRows();
+
+        Text = "Test 123";
     }
 
     // GUI controls
