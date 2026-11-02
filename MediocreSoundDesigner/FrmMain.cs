@@ -36,7 +36,7 @@ public partial class FrmMain : Form
     // GUI controls
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        if (trackManager.SelectedTrack is not null)
+        if (trackManager?.SelectedTrack is not null)
         {
             if (keyData == Keys.Left)
             {

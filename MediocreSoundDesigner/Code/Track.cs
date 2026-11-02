@@ -224,7 +224,7 @@ public class Track : IDisposable {
       int x = DrawOffset;
       // I added/changed next 2 lines for having each track be a different color
       Color color = SAMPLES_DRAW_COLORS[TrackNumber % SAMPLES_DRAW_COLORS.Length];
-      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : color);
+      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : Color.Red);
       List<Point> points = new();
       for (int s = 0; s < samples.Length; s += drawTimescale) {
         var sample = (int)(samples[s] * heightAdj * Volume);
