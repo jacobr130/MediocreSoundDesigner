@@ -25,8 +25,13 @@ public class Track : IDisposable {
   private Panel panContainer;
   private int drawTimescale;
 
-  // consts
-  private static readonly Color SAMPLES_DRAW_COLOR = Color.Cyan;
+    // consts
+    private static readonly Color[] SAMPLES_DRAW_COLORS =
+      {
+        Color.Cyan, Color.Red, Color.Green, Color.Orange, Color.Yellow,
+        Color.AntiqueWhite
+    };
+    public int TrackNumber { get; set; }
   private static readonly Color SAMPLES_DRAW_COLOR_DISABLED = Color.LightGray;
 
   // properties
@@ -217,7 +222,9 @@ public class Track : IDisposable {
     float heightAdj = PanDrawSamples.Height / 2;
     if (samples != null && samples.Length > 0) {
       int x = DrawOffset;
-      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : SAMPLES_DRAW_COLOR);
+      // I added/changed next 2 lines for having each track be a different color
+      Color color = SAMPLES_DRAW_COLORS[TrackNumber % SAMPLES_DRAW_COLORS.Length];
+      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : Color.Red);
       List<Point> points = new();
       for (int s = 0; s < samples.Length; s += drawTimescale) {
         var sample = (int)(samples[s] * heightAdj * Volume);

@@ -5,7 +5,7 @@ namespace MediocreSoundDesigner;
 public partial class FrmMain : Form
 {
     // fields
-    private TrackManager trackManager;
+    private TrackManager? trackManager;
     private int numTracks = 0;
 
     // ctor
@@ -255,6 +255,8 @@ public partial class FrmMain : Form
 
     private void RealignTrackRows()
     {
+        if (trackManager is null) return; 
+
         int top = 0;
         foreach (Track track in trackManager.Tracks)
         {
