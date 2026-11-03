@@ -228,6 +228,8 @@ public partial class FrmMain : Form
         trackRow.Width = panTracks.ClientSize.Width;
         trackRow.BorderStyle = BorderStyle.FixedSingle;
         numTracks++;
+        // added this to keep track of how many tracks
+        track.TrackNumber = numTracks;
         trackRow.LblTrackNum.Text = $"Track {numTracks}";
 
         trackRow.pnlSampleView.Click += (sender, e) =>
