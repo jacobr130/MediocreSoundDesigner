@@ -11,6 +11,8 @@ public enum SampleRegion {
 
 public class Track : IDisposable {
   // Fields
+  // added this for undo button
+  private readonly Stack<(float[] Samples, float Volume)> undoStack = new();
   private string file;
   private TimeSpan duration;
   private float offset;
@@ -83,6 +85,10 @@ public class Track : IDisposable {
   }
 
   // edits
+  // added for undo stuff
+  public bool CanUndo => undoStack.Count > 0;
+
+  private void SaveUndoState() { undoStack.Push((CloneSamples(), Volume)); }
   public float[] CloneSamples() {
     return (float[])samples.Clone();
   }
