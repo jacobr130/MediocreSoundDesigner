@@ -179,6 +179,8 @@ public class Track : IDisposable {
     samples = newSamples;
   }
 
+  public void Mute() { Volume = 0.0f; }
+
   // play
   public void Play() {
     outputDevice?.Dispose();
