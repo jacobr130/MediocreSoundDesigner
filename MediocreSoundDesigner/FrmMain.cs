@@ -19,7 +19,6 @@ public partial class FrmMain : Form
     private void Setup()
     {
         // undo
-        RealignTrackRows();
         ToolStripMenuItem menuEditUndo = new("Undo") { ShortcutKeys = Keys.Control | Keys.Z  };
         menuEditUndo.Click += (s, e) => UndoSelectedTrack();
         menuEdit.DropDownItems.Insert(0, menuEditUndo);
@@ -35,7 +34,9 @@ public partial class FrmMain : Form
         trackManager.DrawTimescale = trkDrawTimescale.Value;
         panTracks.AutoScroll = true;
         panTracks.HorizontalScroll.Enabled = false;
-        RealignTrackRows();
+
+        // playhead width is set here
+        lblPlayhead.Width = 2;
     }
 
     // GUI controls
