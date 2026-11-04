@@ -30,9 +30,9 @@
         {
             pnlSampleView = new Panel();
             pnlTrackOptions = new Panel();
+            btnMuteTrack = new Button();
             LblTrackNum = new Label();
             btnSoloTrack = new Button();
-            btnMuteTrack = new Button();
             pnlTrackOptions.SuspendLayout();
             SuspendLayout();
             // 
@@ -49,14 +49,26 @@
             // 
             pnlTrackOptions.Anchor = AnchorStyles.Right;
             pnlTrackOptions.BackColor = SystemColors.GradientActiveCaption;
+            pnlTrackOptions.Controls.Add(btnMuteTrack);
             pnlTrackOptions.Controls.Add(LblTrackNum);
             pnlTrackOptions.Controls.Add(btnSoloTrack);
-            pnlTrackOptions.Controls.Add(btnMuteTrack);
             pnlTrackOptions.Location = new Point(795, 0);
             pnlTrackOptions.Name = "pnlTrackOptions";
             pnlTrackOptions.Size = new Size(160, 150);
             pnlTrackOptions.TabIndex = 1;
             pnlTrackOptions.Paint += pnlTrackOptions_Paint;
+            // 
+            // btnMuteTrack
+            // 
+            btnMuteTrack.BackColor = SystemColors.ControlLightLight;
+            btnMuteTrack.FlatAppearance.BorderSize = 0;
+            btnMuteTrack.FlatStyle = FlatStyle.Flat;
+            btnMuteTrack.Location = new Point(7, 42);
+            btnMuteTrack.Name = "btnMuteTrack";
+            btnMuteTrack.Size = new Size(75, 23);
+            btnMuteTrack.TabIndex = 0;
+            btnMuteTrack.Text = "Mute";
+            btnMuteTrack.UseVisualStyleBackColor = false;
             // 
             // LblTrackNum
             // 
@@ -76,16 +88,6 @@
             btnSoloTrack.Text = "Solo";
             btnSoloTrack.UseVisualStyleBackColor = true;
             // 
-            // btnMuteTrack
-            // 
-            btnMuteTrack.Location = new Point(7, 42);
-            btnMuteTrack.Name = "btnMuteTrack";
-            btnMuteTrack.Size = new Size(75, 23);
-            btnMuteTrack.TabIndex = 0;
-            btnMuteTrack.Text = "Mute";
-            btnMuteTrack.UseVisualStyleBackColor = true;
-            btnMuteTrack.Click += button1_Click;
-            // 
             // CtrlTrackRow
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
@@ -103,8 +105,8 @@
 
         public Panel pnlSampleView;
         public Panel pnlTrackOptions;
-        public Button btnMuteTrack;
         public Label LblTrackNum;
         public Button btnSoloTrack;
+        public Button btnMuteTrack;
     }
 }

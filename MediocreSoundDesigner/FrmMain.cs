@@ -263,6 +263,20 @@ public partial class FrmMain : Form
             track.DrawSamples(e.Graphics, trackManager.DrawTimescale);
         };
 
+        trackRow.btnMuteTrack.Click += (sender, e) =>
+        {
+            if (track.IsDisabled)
+            {
+                track.ToggleDisabled();
+                trackRow.btnMuteTrack.BackColor = Color.White;
+            }
+            else
+            {
+                track.ToggleDisabled();
+                trackRow.btnMuteTrack.BackColor = Color.LightSlateGray;
+            }
+        };
+
         panTracks.Controls.Add(trackRow);
         track.LinkPanels(trackRow.pnlSampleView, panTracks);
         trackManager.SelectTrack(track);

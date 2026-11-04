@@ -53,15 +53,14 @@ public class TrackManager {
     pseudoCombinedTrack?.Dispose();
     List<float> combinedSamples = new();
     foreach (Track track in Tracks) {
-      if (track.IsDisabled) {
-        continue;
-      }
       float[] trackSamples = (float[])track.GetAdjustedSamples().Clone();
       for (int i = 0; i < trackSamples.Length; i++) {
         if (combinedSamples.Count <= i) {
           combinedSamples.Add(0);
         }
-        combinedSamples[i] += trackSamples[i];
+        if (!track.IsDisabled) {
+          combinedSamples[i] += trackSamples[i];
+        }
       }
     }
     pseudoCombinedTrack = new(combinedSamples.ToArray());
