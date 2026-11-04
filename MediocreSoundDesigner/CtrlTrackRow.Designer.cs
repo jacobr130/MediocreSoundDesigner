@@ -49,9 +49,9 @@
             // 
             pnlTrackOptions.Anchor = AnchorStyles.Right;
             pnlTrackOptions.BackColor = SystemColors.GradientActiveCaption;
+            pnlTrackOptions.Controls.Add(btnSoloTrack);
             pnlTrackOptions.Controls.Add(btnMuteTrack);
             pnlTrackOptions.Controls.Add(LblTrackNum);
-            pnlTrackOptions.Controls.Add(btnSoloTrack);
             pnlTrackOptions.Location = new Point(795, 0);
             pnlTrackOptions.Name = "pnlTrackOptions";
             pnlTrackOptions.Size = new Size(160, 150);
@@ -81,12 +81,15 @@
             // 
             // btnSoloTrack
             // 
+            btnSoloTrack.BackColor = SystemColors.ControlLightLight;
+            btnSoloTrack.FlatAppearance.BorderSize = 0;
+            btnSoloTrack.FlatStyle = FlatStyle.Flat;
             btnSoloTrack.Location = new Point(7, 71);
             btnSoloTrack.Name = "btnSoloTrack";
             btnSoloTrack.Size = new Size(75, 23);
-            btnSoloTrack.TabIndex = 1;
+            btnSoloTrack.TabIndex = 3;
             btnSoloTrack.Text = "Solo";
-            btnSoloTrack.UseVisualStyleBackColor = true;
+            btnSoloTrack.UseVisualStyleBackColor = false;
             // 
             // CtrlTrackRow
             // 
@@ -106,7 +109,7 @@
         public Panel pnlSampleView;
         public Panel pnlTrackOptions;
         public Label LblTrackNum;
-        public Button btnSoloTrack;
         public Button btnMuteTrack;
+        public Button btnSoloTrack;
     }
 }

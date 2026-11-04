@@ -6,38 +6,38 @@ public class TrackManager {
   private Track pseudoCombinedTrack;
   private Panel panContainer;
 
-  public List<Track> Tracks { get; private set; }
-	public Track SelectedTrack { get; private set; }
+  public List<CtrlTrackRow> TrackRows { get; private set; }
+    public CtrlTrackRow SelectedTrackRow { get; private set; }
   public int DrawTimescale { get; set; }
   public PlaybackState State => pseudoCombinedTrack?.State ?? PlaybackState.Stopped;
 
   public TrackManager(Panel panContainer) {
-		Tracks = new();
-    SelectedTrack = null;
+    TrackRows = new();
+    SelectedTrackRow = null;
     pseudoCombinedTrack = null;
     this.panContainer = panContainer;
   }
 
-	public void AddTrack(Track track) {
-		Tracks.Add(track);
+    public void AddTrack(CtrlTrackRow trackRow) {
+		TrackRows.Add(trackRow);
 	}
 
-	public void RemTrack(Track track) {
-		Tracks.Remove(track);
-	}
+    public void RemTrack(CtrlTrackRow trackRow) {
+        TrackRows.Remove(trackRow);
+    }
 
-	public void SelectTrack(Track track) {
-		SelectedTrack = track;
-    Tracks.ForEach(track => {
-      track.PanDrawSamples.BorderStyle = BorderStyle.None;
-      track.PanDrawSamples.BackColor = Color.DimGray;
+    public void SelectTrackRow(CtrlTrackRow trackRow) {
+        SelectedTrackRow = trackRow;
+        TrackRows.ForEach(row => {
+          row.track.PanDrawSamples.BorderStyle = BorderStyle.None;
+          row.track.PanDrawSamples.BackColor = Color.DimGray;
     });
-    track.PanDrawSamples.BorderStyle = BorderStyle.Fixed3D;
-    track.PanDrawSamples.BackColor = Color.Gray;
+        trackRow.track.PanDrawSamples.BorderStyle = BorderStyle.Fixed3D;
+        trackRow.track.PanDrawSamples.BackColor = Color.Gray;
   }
 
   public void RedrawAll() {
-    Tracks.ForEach(track => track.PanDrawSamples.Invalidate());
+    TrackRows.ForEach(trackRow => trackRow.track.PanDrawSamples.Invalidate());
   }
 
   public void SaveToFile(string filename) {
@@ -52,7 +52,8 @@ public class TrackManager {
   private void CombineTracks() {
     pseudoCombinedTrack?.Dispose();
     List<float> combinedSamples = new();
-    foreach (Track track in Tracks) {
+    foreach (CtrlTrackRow trackRow in TrackRows) {
+      Track track = trackRow.track;
       float[] trackSamples = (float[])track.GetAdjustedSamples().Clone();
       for (int i = 0; i < trackSamples.Length; i++) {
         if (combinedSamples.Count <= i) {
@@ -72,4 +73,32 @@ public class TrackManager {
   public int GetPlayheadPos() {
     return (pseudoCombinedTrack?.GetPlayheadPos() ?? 0) / DrawTimescale;
   }
+    
+  public void SoloTrack(Track track)
+  {
+        track.IsSolo = true;
+        if (track.IsDisabled) track.ToggleDisabled();
+        foreach (CtrlTrackRow trackRow in TrackRows)
+        {
+            Track t = trackRow.track;
+            if (t != track)
+            {
+                if (!t.IsDisabled) t.ToggleDisabled();
+                t.IsSolo = false;
+            }
+        }
+  }
+
+  public void UnSoloTrack(Track track)
+  {     
+        track.IsSolo = false;
+        foreach (CtrlTrackRow trackRow in TrackRows)
+        {
+            Track t = trackRow.track;
+            if (t != track)
+            {
+                if (t.IsDisabled) t.ToggleDisabled();
+            }
+        }
+    }
 }

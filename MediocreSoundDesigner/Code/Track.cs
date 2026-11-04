@@ -39,6 +39,7 @@ public class Track : IDisposable {
   // properties
   public int DrawOffset { get; set; }
   public bool IsDisabled { get; private set; }
+    public bool IsSolo { get; set; } = false;
   public Panel PanDrawSamples { get; private set; }
   public float Volume { get; private set; }
   private string tempFilePath => Path.Combine(Path.GetTempPath(), "MediocreSoundDesigner", "temp.wav");
@@ -201,8 +202,8 @@ public class Track : IDisposable {
     IsDisabled = !IsDisabled;
   }
 
-  // file i/o
-  private void SaveToTempFile() {
+    // file i/o
+    private void SaveToTempFile() {
     Directory.CreateDirectory(Path.GetDirectoryName(tempFilePath));
     using var writer = new WaveFileWriter(tempFilePath, fileReader?.WaveFormat ?? new());
     writer.WriteSamples(GetAdjustedSamples(), 0, samples.Length);

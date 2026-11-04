@@ -42,30 +42,32 @@ public partial class FrmMain : Form
     // GUI controls
     protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
     {
-        if (trackManager?.SelectedTrack is not null)
+        if (trackManager?.SelectedTrackRow is not null)
         {
+            Track selectedTrack = trackManager.SelectedTrackRow.track;
             if (keyData == Keys.Left)
             {
-                trackManager.SelectedTrack.ShiftSampleOver(-5);
-                trackManager.SelectedTrack.PanDrawSamples.Invalidate();
+                selectedTrack.ShiftSampleOver(-5);
+                selectedTrack.PanDrawSamples.Invalidate();
                 return true;
             }
             else if (keyData == Keys.Right)
             {
-                trackManager.SelectedTrack.ShiftSampleOver(+5);
-                trackManager.SelectedTrack.PanDrawSamples.Invalidate();
+                selectedTrack.ShiftSampleOver(+5);
+                selectedTrack.PanDrawSamples.Invalidate();
                 return true;
             }
             else if (keyData == Keys.Delete)
             {
-                if (trackManager.SelectedTrack is not null)
+                if (trackManager.SelectedTrackRow is not null)
                 {
                     if (MessageBox.Show("This will delete the selected track. This is NOT undoable!", "Are You Sure?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                     {
-                        panTracks.Controls.Remove(trackManager.SelectedTrack.PanDrawSamples);
-                        trackManager.SelectedTrack.PanDrawSamples.Dispose();
-                        trackManager.SelectedTrack.Dispose();
-                        trackManager.RemTrack(trackManager.SelectedTrack);
+                        CtrlTrackRow trackRow = trackManager.SelectedTrackRow;
+                        panTracks.Controls.Remove(trackRow.track.PanDrawSamples);
+                        trackRow.track.PanDrawSamples.Dispose();
+                        trackRow.track.Dispose();
+                        trackManager.RemTrack(trackRow);
                         RealignTrackRows();
                         return true;
                     }
@@ -100,8 +102,8 @@ public partial class FrmMain : Form
         if (ofdLoadFile.ShowDialog() == DialogResult.OK)
         {
             Track newTrack = new(ofdLoadFile.FileName);
-            CreateTrackRow(newTrack);
-            trackManager.AddTrack(newTrack);
+            CtrlTrackRow trackRow = CreateTrackRow(newTrack);
+            trackManager.AddTrack(trackRow);
             RealignTrackRows();
             newTrack.PanDrawSamples.Invalidate();
         }
@@ -117,27 +119,27 @@ public partial class FrmMain : Form
 
     private void menuEditFlip_Click(object sender, EventArgs e)
     {
-        trackManager.SelectedTrack?.Flip();
+        trackManager.SelectedTrackRow?.track.Flip();
     }
     private void menuEditReverse_Click(object sender, EventArgs e)
     {
-        trackManager.SelectedTrack?.Reverse();
+        trackManager.SelectedTrackRow?.track.Reverse();
     }
     private void menuEditVolume_Click(object sender, EventArgs e)
     {
-        if (trackManager.SelectedTrack is not null)
+        if (trackManager.SelectedTrackRow is not null)
         {
             FrmEditVolume frm = new();
-            frm.SetSound(trackManager.SelectedTrack);
+            frm.SetSound(trackManager.SelectedTrackRow.track);
             frm.ShowDialog();
         }
     }
     private void menuEditEliminateSilence_Click(object sender, EventArgs e)
     {
-        if (trackManager.SelectedTrack is not null)
+        if (trackManager.SelectedTrackRow is not null)
         {
             FrmEditEliminateSilence frm = new();
-            frm.SetSound(trackManager.SelectedTrack);
+            frm.SetSound(trackManager.SelectedTrackRow.track);
             frm.ShowDialog();
         }
     }
@@ -145,16 +147,16 @@ public partial class FrmMain : Form
     private void menuGenRecord_Click(object sender, EventArgs e)
     {
         Track newTrack = new(new float[0]);
-        CreateTrackRow(newTrack);
-        trackManager.AddTrack(newTrack);
+        CtrlTrackRow trackRow = CreateTrackRow(newTrack);
+        trackManager.AddTrack(trackRow);
         RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
 
         FrmGenRecord frm = new();
-        frm.SetSound(trackManager.SelectedTrack);
+        frm.SetSound(trackManager.SelectedTrackRow.track);
         if (frm.ShowDialog() == DialogResult.Cancel)
         {
-            trackManager.RemTrack(newTrack);
+            trackManager.RemTrack(trackRow);
         }
     }
     private void menuGenNoise_Click(object sender, EventArgs e)
@@ -167,8 +169,8 @@ public partial class FrmMain : Form
             samples[i] = rand.NextSingle() * 2.0f - 1.0f;
         }
         Track newTrack = new(samples);
-        CreateTrackRow(newTrack);
-        trackManager.AddTrack(newTrack);
+        CtrlTrackRow trackRow = CreateTrackRow(newTrack);
+        trackManager.AddTrack(trackRow);
         RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
     }
@@ -198,15 +200,15 @@ public partial class FrmMain : Form
             samples[i] = cur;
         }
         Track newTrack = new(samples);
-        CreateTrackRow(newTrack);
-        trackManager.AddTrack(newTrack);
+        CtrlTrackRow trackRow = CreateTrackRow(newTrack);
+        trackManager.AddTrack(trackRow);
         RealignTrackRows();
         newTrack.PanDrawSamples.Invalidate();
     }
 
     private void tmrUpdatePlaybackState_Tick(object sender, EventArgs e)
     {
-        if (trackManager.Tracks.Count > 0)
+        if (trackManager.TrackRows.Count > 0)
         {
             btnPlay.BackgroundImage = trackManager.State == NAudio.Wave.PlaybackState.Playing ? Resources.pause : Resources.play;
             btnPlay.Visible = true;
@@ -232,7 +234,7 @@ public partial class FrmMain : Form
     // undo method
     private void UndoSelectedTrack()
     {
-        Track track = trackManager?.SelectedTrack;
+        Track track = trackManager?.SelectedTrackRow?.track;
 
         if (track is null || !track.CanUndo) return;
         track.Undo();
@@ -240,17 +242,18 @@ public partial class FrmMain : Form
     }
     private CtrlTrackRow CreateTrackRow(Track track)
     {
-        var trackRow = new CtrlTrackRow();
-        trackRow.Width = panTracks.ClientSize.Width;
-        trackRow.BorderStyle = BorderStyle.FixedSingle;
         numTracks++;
         // added this to keep track of how many tracks
         track.TrackNumber = numTracks;
+
+        var trackRow = new CtrlTrackRow(track);
+        trackRow.Width = panTracks.ClientSize.Width;
+        trackRow.BorderStyle = BorderStyle.FixedSingle;
         trackRow.LblTrackNum.Text = $"Track {numTracks}";
 
         trackRow.pnlSampleView.Click += (sender, e) =>
         {
-            trackManager.SelectTrack(track);
+            trackManager.SelectTrackRow(trackRow);
         };
 
         trackRow.pnlSampleView.DoubleClick += (sender, e) =>
@@ -270,7 +273,7 @@ public partial class FrmMain : Form
             {
                 track.ToggleDisabled();
                 track.PanDrawSamples.Invalidate();
-                trackRow.btnMuteTrack.BackColor = Color.White;
+                trackRow.btnMuteTrack.BackColor = SystemColors.ControlLightLight;
             }
             else
             {
@@ -280,9 +283,46 @@ public partial class FrmMain : Form
             }
         };
 
+        trackRow.btnSoloTrack.Click += (sender, e) =>
+        {   
+            if (!trackRow.track.IsSolo)
+            {
+                trackManager.SoloTrack(track);
+                foreach (CtrlTrackRow row in trackManager.TrackRows)
+                {   
+                    row.track.PanDrawSamples.Invalidate();
+
+                    // make sure the buttons are colored correctly
+                    if (row.track != track) row.btnSoloTrack.BackColor = SystemColors.ControlLightLight;
+                    else row.btnSoloTrack.BackColor = Color.DarkOrange;
+
+                    if (row.track.IsDisabled)
+                    {
+                        row.btnMuteTrack.BackColor = Color.LightSlateGray;
+                    }
+                    else row.btnMuteTrack.BackColor = SystemColors.ControlLightLight;
+                }
+
+                // no reason to mute a solo'd track 
+                trackRow.btnMuteTrack.BackColor = SystemColors.InactiveCaption;
+                trackRow.btnMuteTrack.Enabled = false;
+            }
+            else
+            {
+                trackManager.UnSoloTrack(track);
+                trackRow.btnMuteTrack.Enabled = true;
+                foreach (CtrlTrackRow row in trackManager.TrackRows)
+                {
+                    row.track.PanDrawSamples.Invalidate();
+                    row.btnMuteTrack.BackColor = SystemColors.ControlLightLight;
+                    row.btnSoloTrack.BackColor = SystemColors.ControlLightLight;
+                }
+            }
+        };
+
         panTracks.Controls.Add(trackRow);
         track.LinkPanels(trackRow.pnlSampleView, panTracks);
-        trackManager.SelectTrack(track);
+        trackManager.SelectTrackRow(trackRow);
 
         return trackRow;
     }
@@ -292,8 +332,9 @@ public partial class FrmMain : Form
         if (trackManager is null) return; 
 
         int top = 0;
-        foreach (Track track in trackManager.Tracks)
+        foreach (CtrlTrackRow trackRow in trackManager.TrackRows)
         {
+            Track track = trackRow.track;
             if (track.PanDrawSamples.Parent is not CtrlTrackRow row)
                 continue;
 

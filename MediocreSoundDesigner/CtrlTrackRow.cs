@@ -12,9 +12,12 @@ namespace MediocreSoundDesigner
 {
     public partial class CtrlTrackRow : UserControl
     {
-        public CtrlTrackRow()
+        public Track track;
+
+        public CtrlTrackRow(Track track)
         {
             InitializeComponent();
+            this.track = track;
         }
 
         private void button1_Click(object sender, EventArgs e)
