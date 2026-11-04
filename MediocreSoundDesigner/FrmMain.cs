@@ -297,5 +297,6 @@ public partial class FrmMain : Form
 
             top += rowHeight;
         }
+        lblPlayhead.Height = top;
     }
 }
