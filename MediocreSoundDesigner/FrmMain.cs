@@ -268,11 +268,13 @@ public partial class FrmMain : Form
             if (track.IsDisabled)
             {
                 track.ToggleDisabled();
+                track.PanDrawSamples.Invalidate();
                 trackRow.btnMuteTrack.BackColor = Color.White;
             }
             else
             {
                 track.ToggleDisabled();
+                track.PanDrawSamples.Invalidate();
                 trackRow.btnMuteTrack.BackColor = Color.LightSlateGray;
             }
         };
