@@ -18,6 +18,11 @@ public partial class FrmMain : Form
     // setup
     private void Setup()
     {
+        // undo
+        RealignTrackRows();
+        ToolStripMenuItem menuEditUndo = new("Undo") { ShortcutKeys = Keys.Control | Keys.Z  };
+        menuEditUndo.Click += (s, e) => UndoSelectedTrack();
+        menuEdit.DropDownItems.Insert(0, menuEditUndo);
         DoubleBuffered = true;
         trackManager = new(panTracks);
         panTracks.ClientSizeChanged += (_, _) =>
@@ -222,6 +227,16 @@ public partial class FrmMain : Form
     }
 
     // Helper methods
+
+    // undo method
+    private void UndoSelectedTrack()
+    {
+        Track track = trackManager?.SelectedTrack;
+
+        if (track is null || !track.CanUndo) return;
+        track.Undo();
+        track.PanDrawSamples?.Invalidate();
+    }
     private CtrlTrackRow CreateTrackRow(Track track)
     {
         var trackRow = new CtrlTrackRow();

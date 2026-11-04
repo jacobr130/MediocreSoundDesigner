@@ -87,8 +87,14 @@ public class Track : IDisposable {
   // edits
   // added for undo stuff
   public bool CanUndo => undoStack.Count > 0;
-
   private void SaveUndoState() { undoStack.Push((CloneSamples(), Volume)); }
+  public void Undo()
+    {
+        if (!CanUndo) return;
+        var state = undoStack.Pop();
+        samples = state.Samples;
+        Volume = state.Volume;
+    }
   public float[] CloneSamples() {
     return (float[])samples.Clone();
   }
@@ -96,6 +102,7 @@ public class Track : IDisposable {
     this.samples = samples;
   }
   public void Reverse() {
+    SaveUndoState();
     for (int i = 0; i < samples.Length / 2; i++) {
       var temp = samples[i];
       samples[i] = samples[samples.Length - 1 - i];
@@ -103,6 +110,7 @@ public class Track : IDisposable {
     }
   }
   public void Flip() {
+    SaveUndoState();
     for (int i = 0; i < samples.Length; i++) {
       samples[i] *= -1;
     }
@@ -112,9 +120,12 @@ public class Track : IDisposable {
   public void AlterTimeScale(float scale) {
   }
   public void SetVolume(float newVolume) {
+    if (newVolume == Volume) return;
+    SaveUndoState();
     Volume = newVolume;
   }
   public void EliminateSilence(SampleRegion region, float minDuration, float thres) {
+    SaveUndoState();
     float[] newSamples = CloneSamples();
     if (region is SampleRegion.BEGINNING_ONLY or SampleRegion.BEGINNING_AND_END) {
       int silentDurationInNumSamples = 0;
