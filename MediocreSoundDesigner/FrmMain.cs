@@ -64,7 +64,7 @@ public partial class FrmMain : Form
                     if (MessageBox.Show("This will delete the selected track. This is NOT undoable!", "Are You Sure?", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Exclamation) == DialogResult.Yes)
                     {
                         CtrlTrackRow trackRow = trackManager.SelectedTrackRow;
-                        panTracks.Controls.Remove(trackRow.track.PanDrawSamples);
+                        panTracks.Controls.Remove(trackRow);
                         trackRow.track.PanDrawSamples.Dispose();
                         trackRow.track.Dispose();
                         trackManager.RemTrack(trackRow);

@@ -1,21 +1,24 @@
 ﻿using NAudio.Wave;
+using NAudio.Wave.SampleProviders;
 
 namespace MediocreSoundDesigner; 
 
 public class TrackManager {
   private Track pseudoCombinedTrack;
+  private WaveOut outputDevice;
+  private WaveFormat playbackWaveFormat;
   private Panel panContainer;
 
   public List<CtrlTrackRow> TrackRows { get; private set; }
     public CtrlTrackRow SelectedTrackRow { get; private set; }
   public int DrawTimescale { get; set; }
-  public PlaybackState State => pseudoCombinedTrack?.State ?? PlaybackState.Stopped;
+  public PlaybackState State => outputDevice?.PlaybackState ?? PlaybackState.Stopped;
 
   public TrackManager(Panel panContainer) {
     TrackRows = new();
     SelectedTrackRow = null;
     pseudoCombinedTrack = null;
-    this.panContainer = panContainer;
+        this.panContainer = panContainer;
   }
 
     public void AddTrack(CtrlTrackRow trackRow) {
@@ -45,10 +48,28 @@ public class TrackManager {
     pseudoCombinedTrack.SaveToFile(filename);
   }
 
-	public void PlayAll() {
-    CombineTracks();
-    pseudoCombinedTrack.Play();
-  }
+    public void PlayAll()
+    {
+        var inputs = TrackRows
+            .Select(row => row.track.GetSampleProvider())
+            .ToList();
+        if (inputs.Count == 0) return;
+
+        var mixer = new MixingSampleProvider(inputs[0].WaveFormat)
+        {
+            ReadFully = true
+        };
+        foreach (var input in inputs) mixer.AddMixerInput(input);
+        playbackWaveFormat = mixer.WaveFormat;
+
+        outputDevice?.Dispose();
+        outputDevice = new WaveOut();
+        outputDevice.Init(new SampleToWaveProvider(mixer));
+        outputDevice.Play();
+    }
+
+    public void PauseAll() { outputDevice?.Pause(); }
+
   private void CombineTracks() {
     pseudoCombinedTrack?.Dispose();
     List<float> combinedSamples = new();
@@ -67,11 +88,22 @@ public class TrackManager {
     pseudoCombinedTrack = new(combinedSamples.ToArray());
     pseudoCombinedTrack.LinkPanels(null, panContainer);
   }
-  public void PauseAll() {
-    pseudoCombinedTrack?.Pause();
-  }
   public int GetPlayheadPos() {
-    return (pseudoCombinedTrack?.GetPlayheadPos() ?? 0) / DrawTimescale;
+    if (outputDevice is null || playbackWaveFormat is null || DrawTimescale <= 0)
+    {
+      return 0;
+    }
+
+    int bytesPerSample = playbackWaveFormat.BitsPerSample / 8;
+    if (bytesPerSample <= 0)
+    {
+      return 0;
+    }
+
+    // GetPosition / bytesPerSample = # of samples played
+    long samplesPlayed = outputDevice.GetPosition() / bytesPerSample;
+    // samplesPlayed / DrawTimescale = pos on screen of current location
+    return (int)(samplesPlayed / DrawTimescale);
   }
     
   public void SoloTrack(Track track)
@@ -93,7 +125,9 @@ public class TrackManager {
   {     
         track.IsSolo = false;
         foreach (CtrlTrackRow trackRow in TrackRows)
-        {
+        {   
+            trackRow.btnMuteTrack.Enabled = true;
+
             Track t = trackRow.track;
             if (t != track)
             {
