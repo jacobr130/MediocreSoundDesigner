@@ -108,7 +108,7 @@ public class Track : IDisposable {
   public void Reverb(float decay, float mix) 
   {
     SaveUndoState();
-    int rate = SampleRate > 0 ? sampleRate : 44100;
+    int rate = SampleRate > 0 ? SampleRate : 44100;
     int ch = Math.Max(1, Channels);
     int frames = Samples.Length / ch;
     int outFrames = frames + (int)(rate * 1.5f);
@@ -147,7 +147,7 @@ public class Track : IDisposable {
     {
       for (int i = 0; i < result.Length; i++) result[i] /= peak;
     }
-    samples = result;
+    Samples = result;
   }
 
   private static float[] AllPass(float[] x, int delay, float g)

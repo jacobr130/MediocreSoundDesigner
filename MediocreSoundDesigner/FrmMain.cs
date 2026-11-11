@@ -30,6 +30,17 @@ public partial class FrmMain : Form
                 BeginInvoke((Action)RealignTrackRows);
         };
 
+        // reverb
+        ToolStripMenuItem menuEditReverb = new("Reverb");
+        menuEditReverb.Click += (s, e) =>
+        {
+            Track track = trackManager?.S;
+            if (track is null) return;
+            track.Reverb(0.7f, 0.3f);
+            track.PanDrawSamples?.Invalidate();
+        };
+        menuEdit.DropDownItems.Add(menuEditReverb);
+
         btnPlay.BackgroundImage = Resources.play;
         trackManager.DrawTimescale = trkDrawTimescale.Value;
         panTracks.AutoScroll = true;
