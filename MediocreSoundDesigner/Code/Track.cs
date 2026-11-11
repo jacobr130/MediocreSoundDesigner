@@ -102,6 +102,11 @@ public class Track : IDisposable {
   public void ReplaceSamples(float[] samples) {
     this.Samples = samples;
   }
+
+  // added for reverb
+
+
+  // end of reverb stuff
   public void Reverse() {
     SaveUndoState();
     for (int i = 0; i < Samples.Length / 2; i++) {
