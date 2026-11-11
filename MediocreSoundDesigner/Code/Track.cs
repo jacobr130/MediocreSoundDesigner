@@ -108,16 +108,16 @@ public class Track : IDisposable {
   public void Reverb(float decay, float mix) 
   {
     SaveUndoState();
-    int rate = sampleRate > 0 ? sampleRate : 44100;
-    int ch = Math.Max(1, channels);
-    int frames = samples.Length / ch;
+    int rate = SampleRate > 0 ? sampleRate : 44100;
+    int ch = Math.Max(1, Channels);
+    int frames = Samples.Length / ch;
     int outFrames = frames + (int)(rate * 1.5f);
     float[] result = new float[outFrames * ch];
 
     for (int c = 0; c < ch; c++) 
     {
       float[] dry = new float[outFrames];
-      for (int f = 0; f < frames; f++) dry[f] = samples[f * ch + c];
+      for (int f = 0; f < frames; f++) dry[f] = Samples[f * ch + c];
 
       float[] wet = new float[outFrames];
       foreach (float ms in new[] { 29.7f, 37.1f, 41.1f, 43.7f })
