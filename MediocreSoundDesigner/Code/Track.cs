@@ -102,9 +102,65 @@ public class Track : IDisposable {
   public void ReplaceSamples(float[] samples) {
     this.Samples = samples;
   }
+  // end of undo stuff
 
   // added for reverb
+  public void Reverb(float decay, float mix) 
+  {
+    SaveUndoState();
+    int rate = sampleRate > 0 ? sampleRate : 44100;
+    int ch = Math.Max(1, channels);
+    int frames = samples.Length / ch;
+    int outFrames = frames + (int)(rate * 1.5f);
+    float[] result = new float[outFrames * ch];
 
+    for (int c = 0; c < ch; c++) 
+    {
+      float[] dry = new float[outFrames];
+      for (int f = 0; f < frames; f++) dry[f] = samples[f * ch + c];
+
+      float[] wet = new float[outFrames];
+      foreach (float ms in new[] { 29.7f, 37.1f, 41.1f, 43.7f })
+      {
+        int d = (int)(rate * ms / 1000f);
+        float[] comb = new float[outFrames];
+        for (int n = 0; n < outFrames; n++) 
+        {
+          float feedback = n >= d ? comb[n - d] * decay : 0f;
+          comb[n] = dry[n] + feedback;
+          wet[n] += comb[n] * 0.25f;
+        }
+      }
+
+      wet = AllPass(wet, (int)(rate * 0.005f), 0.7f);
+      wet = AllPass(wet, (int)(rate * 0.0017f), 0.7f);
+
+      for (int n = 0; n < outFrames; n++) 
+      {
+        result[n * ch + c] = dry[n] * (1f - mix) + wet[n] * mix;
+      }
+    }
+
+    float peak = 0f;
+    foreach (float s in result) peak = Math.Max(peak, Math.Abs(s));
+    if (peak > 1f)
+    {
+      for (int i = 0; i < result.Length; i++) result[i] /= peak;
+    }
+    samples = result;
+  }
+
+  private static float[] AllPass(float[] x, int delay, float g)
+  {
+    float[] y = new float[x.Length];
+    for (int n = 0; n < x.Length; n++)
+    {
+      float xd = n >= delay ? x[n - delay] : 0f;
+      float yd = n >= delay ? y[n - delay] : 0f;
+      y[n] = -g * x[n] + xd + g *yd;
+    }
+    return y;
+  }
 
   // end of reverb stuff
   public void Reverse() {
