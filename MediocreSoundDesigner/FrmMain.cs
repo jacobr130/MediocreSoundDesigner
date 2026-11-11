@@ -34,9 +34,9 @@ public partial class FrmMain : Form
         ToolStripMenuItem menuEditReverb = new("Reverb");
         menuEditReverb.Click += (s, e) =>
         {
-            Track track = trackManager?.S;
+            Track track = trackManager?.SelectedTrackRow?.track;
             if (track is null) return;
-            track.Reverb(0.7f, 0.3f);
+            track.Reverb(0.88f, 0.6f);
             track.PanDrawSamples?.Invalidate();
         };
         menuEdit.DropDownItems.Add(menuEditReverb);
