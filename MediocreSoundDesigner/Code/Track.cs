@@ -28,11 +28,7 @@ public class Track : IDisposable {
   private int drawTimescale;
 
     // consts
-    private static readonly Color[] SAMPLES_DRAW_COLORS =
-      {
-        Color.Cyan, Color.Red, Color.Green, Color.Orange, Color.Yellow,
-        Color.AntiqueWhite
-    };
+
     public int TrackNumber { get; set; }
   private static readonly Color SAMPLES_DRAW_COLOR_DISABLED = Color.LightGray;
 
@@ -284,9 +280,7 @@ public class Track : IDisposable {
     float heightAdj = PanDrawSamples.Height / 2;
     if (Samples != null && Samples.Length > 0) {
       int x = DrawOffset;
-      // I added/changed next 2 lines for having each track be a different color
-      Color color = SAMPLES_DRAW_COLORS[TrackNumber % SAMPLES_DRAW_COLORS.Length];
-      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : color);
+      Pen pen = new(IsDisabled ? SAMPLES_DRAW_COLOR_DISABLED : Color.Black);
       List<Point> points = new();
       for (int s = 0; s < Samples.Length; s += drawTimescale) {
         var sample = (int)(Samples[s] * heightAdj * Volume);

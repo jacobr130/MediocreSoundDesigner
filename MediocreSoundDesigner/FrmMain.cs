@@ -4,6 +4,12 @@ namespace MediocreSoundDesigner;
 
 public partial class FrmMain : Form
 {
+    // colors
+    private static readonly Color[] SAMPLES_DRAW_COLORS =
+  {
+        Color.Cyan, Color.Red, Color.Green, Color.Orange, Color.Yellow,
+        Color.AntiqueWhite
+    };
     // fields
     private TrackManager? trackManager;
     private int numTracks = 0;
@@ -275,6 +281,10 @@ public partial class FrmMain : Form
 
         trackRow.pnlSampleView.Paint += (sender, e) =>
         {
+            // color stuff
+            Color color = SAMPLES_DRAW_COLORS[track.TrackNumber % SAMPLES_DRAW_COLORS.Length];
+            trackRow.pnlSampleView.BackColor = color;
+            // end of color stuff
             track.DrawSamples(e.Graphics, trackManager.DrawTimescale);
         };
 
