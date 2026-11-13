@@ -51,6 +51,7 @@
             sfdSaveFile = new SaveFileDialog();
             trkDrawTimescale = new TrackBar();
             colorDialog = new ColorDialog();
+            btnStop = new Button();
             panTracks.SuspendLayout();
             menu.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)trkDrawTimescale).BeginInit();
@@ -193,7 +194,7 @@
             btnPlay.FlatAppearance.MouseOverBackColor = Color.Transparent;
             btnPlay.FlatStyle = FlatStyle.Flat;
             btnPlay.Font = new Font("Segoe UI", 15.75F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            btnPlay.Location = new Point(717, 661);
+            btnPlay.Location = new Point(640, 662);
             btnPlay.Name = "btnPlay";
             btnPlay.Size = new Size(100, 100);
             btnPlay.TabIndex = 6;
@@ -220,12 +221,27 @@
             trkDrawTimescale.Value = 500;
             trkDrawTimescale.Scroll += trkDrawTimescale_Scroll;
             // 
+            // btnStop
+            // 
+            btnStop.BackColor = Color.Transparent;
+            btnStop.BackgroundImage = Properties.Resources.stop;
+            btnStop.BackgroundImageLayout = ImageLayout.Stretch;
+            btnStop.FlatStyle = FlatStyle.Flat;
+            btnStop.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            btnStop.Location = new Point(746, 662);
+            btnStop.Name = "btnStop";
+            btnStop.Size = new Size(97, 100);
+            btnStop.TabIndex = 8;
+            btnStop.UseVisualStyleBackColor = false;
+            btnStop.Click += btnStop_Click;
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             BackColor = Color.Black;
             ClientSize = new Size(1604, 783);
+            Controls.Add(btnStop);
             Controls.Add(trkDrawTimescale);
             Controls.Add(btnPlay);
             Controls.Add(lblDebug);
@@ -268,5 +284,6 @@
     private ToolStripMenuItem menuEditEliminateSilence;
     private Label lblPlayhead;
     private ToolStripMenuItem menuGenRecord;
+        private Button btnStop;
     }
 }

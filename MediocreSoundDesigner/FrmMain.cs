@@ -59,7 +59,9 @@ public partial class FrmMain : Form
         trkDrawTimescale.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
         panTracks.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
         btnPlay.Anchor = AnchorStyles.Bottom;
+        btnStop.Anchor = AnchorStyles.Bottom;
         btnPlay.BringToFront();
+        btnStop.BringToFront();
 
         WindowState = FormWindowState.Maximized;
 
@@ -122,6 +124,11 @@ public partial class FrmMain : Form
             trackManager.PauseAll();
             btnPlay.BackgroundImage = Resources.play;
         }
+    }
+
+    private void btnStop_Click(object sender, EventArgs e)
+    {
+        trackManager.StopAll();
     }
 
     private void menuFileOpen_Click(object sender, EventArgs e)
@@ -240,13 +247,17 @@ public partial class FrmMain : Form
         {
             btnPlay.BackgroundImage = trackManager.State == NAudio.Wave.PlaybackState.Playing ? Resources.pause : Resources.play;
             btnPlay.Visible = true;
+            btnStop.BackgroundImage = Resources.stop;
+            btnStop.Visible = true; 
             lblPlayhead.Left = trackManager.GetPlayheadPos();
             lblPlayhead.Visible = true;
         }
         else
         {
             btnPlay.BackgroundImage = null;
+            btnStop.BackgroundImage = null;
             btnPlay.Visible = false;
+            btnStop.Visible = false;
             lblPlayhead.Visible = false;
         }
     }

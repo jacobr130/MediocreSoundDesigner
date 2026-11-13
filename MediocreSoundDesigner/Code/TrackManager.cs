@@ -8,6 +8,7 @@ public class TrackManager {
   private WaveOut outputDevice;
   private WaveFormat playbackWaveFormat;
   private Panel panContainer;
+  private bool paused = false;
 
   public List<CtrlTrackRow> TrackRows { get; private set; }
     public CtrlTrackRow SelectedTrackRow { get; private set; }
@@ -50,6 +51,13 @@ public class TrackManager {
 
     public void PlayAll()
     {
+        if (paused)
+        {
+            paused = false;
+            outputDevice?.Play();
+            return;
+        }
+
         var inputs = TrackRows
             .Select(row => row.track.GetSampleProvider())
             .ToList();
@@ -68,9 +76,19 @@ public class TrackManager {
         outputDevice.Play();
     }
 
-    public void PauseAll() { outputDevice?.Pause(); }
+    public void PauseAll() 
+    {
+        paused = true;
+        outputDevice?.Pause(); 
+    }
 
-  private void CombineTracks() {
+    public void StopAll()
+    {
+        paused = false;
+        outputDevice?.Stop();
+    }
+
+    private void CombineTracks() {
     pseudoCombinedTrack?.Dispose();
     List<float> combinedSamples = new();
     foreach (CtrlTrackRow trackRow in TrackRows) {
