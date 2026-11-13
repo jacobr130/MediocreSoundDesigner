@@ -48,6 +48,15 @@ public partial class FrmMain : Form
         };
         menuEdit.DropDownItems.Add(menuEditReverb);
 
+        // ff and sd
+        ToolStripMenuItem menuEditFast = new("Fast Forward (2x)");
+        menuEditFast.Click += (s, e) => ApplySpeed(2f);
+        menuEdit.DropDownItems.Add(menuEditFast);
+        ToolStripMenuItem menuEditSlow = new("Slow Down (0.5x)");
+        menuEditSlow.Click += (s, e) => ApplySpeed(0.5f);
+        menuEdit.DropDownItems.Add(menuEditSlow);
+
+
         btnPlay.BackgroundImage = Resources.play;
         trackManager.DrawTimescale = trkDrawTimescale.Value;
         panTracks.AutoScroll = true;
@@ -278,6 +287,15 @@ public partial class FrmMain : Form
 
         if (track is null || !track.CanUndo) return;
         track.Undo();
+        track.PanDrawSamples?.Invalidate();
+    }
+
+    // ff and sd
+    private void ApplySpeed(float scale)
+    {
+        Track track = trackManager?.SelectedTrackRow?.track;
+        if (track is null) return;
+        track.AlterTimeScale(scale);
         track.PanDrawSamples?.Invalidate();
     }
     private CtrlTrackRow CreateTrackRow(Track track)

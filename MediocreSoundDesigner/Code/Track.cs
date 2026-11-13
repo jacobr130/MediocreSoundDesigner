@@ -181,8 +181,30 @@ public class Track : IDisposable {
   }
   public void Trim() {
   }
-  public void AlterTimeScale(float scale) {
-  }
+  public void AlterTimeScale(float scale)
+    {
+        if (scale <= 0f) return;
+        int ch = Math.Max(1, Channels);
+        int frames = Samples.Length / ch;
+        int outFrames = (int)(frames / scale);
+        if (outFrames < 1) return;
+
+        SaveUndoState();
+
+        float[] result = new float[outFrames * ch];
+        for (int f = 0; f < outFrames; f++)
+        {
+            float pos = f * scale;
+            int i0 = (int)pos;
+            int i1 = Math.Min(i0 + 1, frames - 1);
+            float t = pos - i0;
+            for (int c = 0; c < ch; c++)
+            {
+                result[f * ch + c] = Samples[i0 * ch + c] * (1f - t) + Samples[i1 * ch + c] * t;
+            }
+        }
+        Samples = result;
+    }
   public void SetVolume(float newVolume) {
     if (newVolume == Volume) return;
     SaveUndoState();
