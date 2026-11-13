@@ -144,7 +144,8 @@ public class Track : IDisposable {
       for (int i = 0; i < result.Length; i++) result[i] /= peak;
     }
     Samples = result;
-  }
+    PanDrawSamples.Invalidate();
+    }
 
   private static float[] AllPass(float[] x, int delay, float g)
   {
@@ -165,12 +166,14 @@ public class Track : IDisposable {
       var temp = Samples[i];
       Samples[i] = Samples[Samples.Length - 1 - i];
       Samples[Samples.Length - 1 - i] = temp;
+      PanDrawSamples.Invalidate();
     }
   }
   public void Flip() {
     SaveUndoState();
     for (int i = 0; i < Samples.Length; i++) {
       Samples[i] *= -1;
+      PanDrawSamples.Invalidate();
     }
   }
   public void Trim() {
@@ -181,6 +184,7 @@ public class Track : IDisposable {
     if (newVolume == Volume) return;
     SaveUndoState();
     Volume = newVolume;
+    PanDrawSamples.Invalidate();
   }
   public void EliminateSilence(SampleRegion region, float minDuration, float thres) {
     SaveUndoState();
@@ -235,6 +239,7 @@ public class Track : IDisposable {
       }
     }
     Samples = newSamples;
+    PanDrawSamples.Invalidate();
   }
 
     // returns an object that supplies the track's samples to the mixer
