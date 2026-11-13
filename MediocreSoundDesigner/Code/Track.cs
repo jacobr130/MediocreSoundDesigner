@@ -166,7 +166,7 @@ public class Track : IDisposable {
   // end of reverb stuff
 
   // normalize stuff
-  public void Normalize(float targetPeak = 0.95f)
+  public void Normalize(float targetPeak = 1f)
     {
         float peak = 0f;
         foreach (float s in Samples) peak = Math.Max(peak, Math.Abs(s));
