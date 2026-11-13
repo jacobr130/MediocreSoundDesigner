@@ -1,5 +1,6 @@
 ﻿using NAudio.Wave;
 using NAudio.Wave.SampleProviders;
+using System.IO.Pipelines;
 
 namespace MediocreSoundDesigner; 
 
@@ -152,5 +153,10 @@ public class TrackManager {
                 if (t.IsDisabled) t.ToggleDisabled();
             }
         }
+    }
+
+    public void Dispose()
+    {
+        outputDevice?.Dispose();
     }
 }
