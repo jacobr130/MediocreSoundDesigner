@@ -1,4 +1,5 @@
-﻿using NAudio.Wave;
+﻿using NAudio.Effects;
+using NAudio.Wave;
 
 namespace MediocreSoundDesigner;
 
@@ -163,6 +164,23 @@ public class Track : IDisposable {
   }
 
   // end of reverb stuff
+
+  // normalize stuff
+  public void Normalize(float targetPeak = 0.95f)
+    {
+        float peak = 0f;
+        foreach (float s in Samples) peak = Math.Max(peak, Math.Abs(s));
+        if (peak < 0.0001f) return;
+
+        float gain = targetPeak / peak;
+        if (Math.Abs(gain - 1f) < 0.001f) return;
+
+        SaveUndoState();
+        for (int i = 0; i < Samples.Length; i++)
+        {
+            Samples[i] *= gain;
+        }
+    }
   public void Reverse() {
     SaveUndoState();
     for (int i = 0; i < Samples.Length / 2; i++) {

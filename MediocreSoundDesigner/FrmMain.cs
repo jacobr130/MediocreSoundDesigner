@@ -56,6 +56,17 @@ public partial class FrmMain : Form
         menuEditSlow.Click += (s, e) => ApplySpeed(0.5f);
         menuEdit.DropDownItems.Add(menuEditSlow);
 
+        // normalize
+        ToolStripMenuItem menuEditNormalize = new("Normalize");
+        menuEditNormalize.Click += (s, e) =>
+        {
+            Track track = trackManager?.SelectedTrackRow?.track;
+            if (track is null) return;
+            track.Normalize();
+            track.PanDrawSamples?.Invalidate();
+        };
+        menuEdit.DropDownItems.Add(menuEditNormalize);
+
 
         btnPlay.BackgroundImage = Resources.play;
         trackManager.DrawTimescale = trkDrawTimescale.Value;
