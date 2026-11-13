@@ -223,9 +223,13 @@
             // 
             // btnStop
             // 
+            btnStop.AutoSize = true;
             btnStop.BackColor = Color.Transparent;
             btnStop.BackgroundImage = Properties.Resources.stop;
             btnStop.BackgroundImageLayout = ImageLayout.Stretch;
+            btnStop.FlatAppearance.MouseDownBackColor = Color.Transparent;
+            btnStop.FlatAppearance.MouseOverBackColor = Color.Transparent;
+            btnStop.FlatAppearance.BorderSize = 0;
             btnStop.FlatStyle = FlatStyle.Flat;
             btnStop.Font = new Font("Segoe UI", 15F, FontStyle.Regular, GraphicsUnit.Point, 0);
             btnStop.Location = new Point(746, 662);
