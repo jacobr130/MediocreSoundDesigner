@@ -15,10 +15,6 @@ public partial class FrmMain : Form
     private TrackManager? trackManager;
     private int numTracks = 0;
 
-    // reverb parameters
-    public const float REV_DECAY = 0.88f;
-    public const float REV_MIX = 0.6f;
-
     // ctor
     public FrmMain()
     {
@@ -47,7 +43,7 @@ public partial class FrmMain : Form
         {
             Track track = trackManager?.SelectedTrackRow?.track;
             if (track is null) return;
-            track.Reverb(REV_DECAY, REV_MIX);
+            track.Reverb();
             track.PanDrawSamples?.Invalidate();
         };
         menuEdit.DropDownItems.Add(menuEditReverb);

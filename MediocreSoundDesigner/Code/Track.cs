@@ -101,8 +101,11 @@ public class Track : IDisposable {
   // end of undo stuff
 
   // added for reverb
-  public void Reverb(float decay, float mix) 
+  public void Reverb() 
   {
+    float decay = 0.88f;
+    float mix = 0.6f;
+
     SaveUndoState();
     int rate = SampleRate > 0 ? SampleRate : 44100;
     int ch = Math.Max(1, Channels);
