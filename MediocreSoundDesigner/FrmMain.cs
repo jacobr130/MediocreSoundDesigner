@@ -54,6 +54,17 @@ public partial class FrmMain : Form
 
         // playhead width is set here
         lblPlayhead.Width = 2;
+
+        // resizing stuff
+        trkDrawTimescale.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        panTracks.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Right | AnchorStyles.Left;
+        btnPlay.Anchor = AnchorStyles.Bottom;
+        btnPlay.BringToFront();
+
+        WindowState = FormWindowState.Maximized;
+
+        Rectangle area = Screen.FromControl(this).WorkingArea;
+        Size = new Size(Math.Min(Width, area.Width), Math.Min(Height, area.Height));
     }
 
     // GUI controls
