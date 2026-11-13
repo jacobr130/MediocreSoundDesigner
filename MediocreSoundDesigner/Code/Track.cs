@@ -180,6 +180,8 @@ public class Track : IDisposable {
         {
             Samples[i] *= gain;
         }
+
+        PanDrawSamples?.Invalidate();
     }
   public void Reverse() {
     SaveUndoState();
