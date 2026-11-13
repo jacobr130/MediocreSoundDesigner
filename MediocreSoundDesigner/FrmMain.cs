@@ -7,8 +7,8 @@ public partial class FrmMain : Form
     // colors
     private static readonly Color[] SAMPLES_DRAW_COLORS =
   {
-        Color.Cyan, Color.Red, Color.Green, Color.Orange, Color.Yellow,
-        Color.AntiqueWhite
+        Color.LightCyan, Color.LightGreen, Color.LightPink, Color.LightYellow, Color.LightCoral,
+        Color.LightSalmon
     };
     // fields
     private TrackManager? trackManager;
